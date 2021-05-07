@@ -1,11 +1,6 @@
 # Docker container for a node application
-FROM node:16
-WORKDIR /usr/src/app
-COPY package*.json ./
-RUN npm install
-
-COPY . .
-
-EXPOSE 8080
-
-CMD ["node", "server.js"]
+FROM postgres
+ENV POSTGRES_USER postgres
+ENV POSTGRES_PASSWORD postgres
+ENV POSTGRES_DB coverwhale
+COPY db-setup.sql /docker-entrypoint-initdb.d/
