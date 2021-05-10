@@ -1,7 +1,14 @@
 const express = require('express')
-const app = express()
+const bodyParser = require('body-parser')
+const cors = require('cors')
 const Pool = require('pg').Pool
 const generators = require('./setup')
+
+const app = express()
+
+app.use(express.json())
+app.use(express.urlencoded())
+app.use(cors())
 
 const pool = new Pool({
   host: 'localhost',
@@ -40,6 +47,21 @@ app.get("/", async (req, res) => {
   res.send('<h1>A-OK</h1>')
 })
 
+app.post("/login", (req, result) => {
+  console.log(req.body)
+  // var data = req.body.username
+  // console.log(data)
+  var email = req.body.email
+  var password = req.body.password
+  console.log(email, password)
+  pool.query(`SELECT * FROM users WHERE users.email = '${email}' AND users.password = '${password}'`)
+    .then((response) => {
+      console.log(response.rows[0])
+      result.send(JSON.stringify(response.rows[0]))
+    })
+    .catch(err => console.log(err))
+})
+
 app.get('/get', (req, res) => {
   pool.query('SELECT * FROM users')
     .then(result => {
@@ -62,6 +84,8 @@ app.get('/get2', (req, res) => {
       }
     })
 })
+
+
 // pool.query('SELECT * FROM users', (err, result) => {
 //   if (err) {
 //     throw err
