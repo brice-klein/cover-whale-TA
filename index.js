@@ -21,16 +21,13 @@ const pool = new Pool({
 const PORT = 3000
 const HOST = '0.0.0.0'
 
-app.get("/", async (req, res) => {
-  // res.setHeader('Content-Type', 'text/html')
-
+app.get("/api", async (req, res) => {
   const insertUsersQuery = generators.generateUsers()
-  // console.log(query)
   try {
     pool.query(insertUsersQuery)
   } catch (err) {
     if (err) {
-      res.send(401)
+      res.sendStatus(401)
       throw err
     }
   }
@@ -40,11 +37,23 @@ app.get("/", async (req, res) => {
     pool.query(insertQuotesQuery)
   } catch (err) {
     if (err) {
-      res.send(401)
+      res.sendStatus(401)
       throw err
     }
   }
-  res.send('<h1>A-OK</h1>')
+})
+
+app.get("/randomUser", (req, res) => {
+  pool.query(`SELECT * FROM users`)
+    .then((response) => {
+      console.log('random user- ', response.rows[0])
+      res.send(JSON.stringify(response.rows[0]))
+    })
+    .catch((err) => {
+      if (err) {
+        throw err
+      }
+    })
 })
 
 app.post("/login", (req, res) => {
@@ -53,22 +62,25 @@ app.post("/login", (req, res) => {
 
   pool.query(`SELECT * FROM users WHERE users.email = '${email}' AND users.password = '${password}'`)
     .then((response) => {
-      console.log('Express, login- ', response.rows[0])
       res.send(JSON.stringify(response.rows[0]))
     })
-    .catch(err => console.log(err))
+    .catch((err) => {
+      if (err) {
+        throw err
+      }
+    })
 })
 
 app.get("/getToken/:token", (req, res) => {
   var token = req.params.token
-  console.log('token- ', token)
   pool.query(`SELECT * FROM users WHERE users.remember_token = '${token}'`)
     .then((response) => {
-      console.log('Express, token login- ', response)
       res.send(JSON.stringify(response.rows[0]))
     })
     .catch((err) => {
-      throw err
+      if (err) {
+        throw err
+      }
     })
 })
 
@@ -81,12 +93,13 @@ app.put("/setToken", (req, res) => {
       res.send(response)
     })
     .catch((err) => {
-      throw err
+      if (err) {
+        throw err
+      }
     })
 })
 
 app.post("/addQuote", (req, res) => {
-  console.log('Express, updateQuote req.body- ', req.body)
   var quoteId = req.body.quoteId
   var userId = req.body.userId
 
@@ -100,19 +113,17 @@ app.post("/addQuote", (req, res) => {
 })
 
 app.get("/quotes/:userId", (req, res) => {
-  console.log('Express, "userID" rout- ', req.params)
   var userId = req.params.userId
 
   pool.query(`SELECT * FROM quotes WHERE quotes.user_id = '${userId}'`)
     .then((response) => {
-      console.log('Express, userId quota route response- ', response)
-      // if (response.rows.length >= 1) {
       res.send(JSON.stringify(response.rows))
-      // } else {
-      //   res.send(null)
-      // }
     })
-    .catch(err => console.log(err))
+    .catch((err) => {
+      if (err) {
+        throw err
+      }
+    })
 })
 
 app.get("/search/:state", (req, res) => {
@@ -127,7 +138,6 @@ app.get("/search/:state", (req, res) => {
   // AND zipcode = '${zipcode}
   pool.query(`SELECT * FROM quotes WHERE state = '${state}'`)
     .then((response) => {
-      console.log('State quotes query- ', response)
       if (response.rows) {
         res.send(JSON.stringify(response.rows))
       } else {
@@ -171,29 +181,5 @@ app.get('/get2', (req, res) => {
       }
     })
 })
-
-
-// pool.query('SELECT * FROM users', (err, result) => {
-//   if (err) {
-//     throw err
-//   }
-//   res.send(result.rows[0])
-// })
-
-// for (var i = 0; i < 20; i++) {
-//   res.write(`<h1>THis is response #${i}{</h1>`)
-// }
-// res.end()
-//res.send('data')
 app.listen(PORT, HOST)
-// app.on('listening', () => {
-//   const usersInsertQuery = generators.generateUsers()
-//   pool.query(usersInsertQuery)
-//     .then(res => {
-//       if (res) {
-//         const quotesInsertQuery = generators.generateQuotes()
-//         pool.query(quotesInsertQuery)
-//       }
-//     })
-// })
 console.log(`App running at- http://${HOST}:${PORT}`)

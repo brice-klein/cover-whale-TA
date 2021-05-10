@@ -5,13 +5,13 @@ const generateUsers = () => {
   var queries = ``
   for (var i = 0; i < 1000; i++) {
     var id = uuidv4()
-    var name = faker.name.findName().replaceAll(`'`, `''`)
+    var name = faker.name.findName().split("'").join(`''`)
     var email = faker.internet.email()
     var password = faker.internet.password()
     var remember_token = null
-    var company_name = faker.company.companyName().replaceAll(`'`, `''`)
-    var company_street = faker.address.streetName().replaceAll(`'`, `''`)
-    var company_city = faker.address.cityName().replaceAll(`'`, `''`)
+    var company_name = faker.company.companyName().split("'").join(`''`)
+    var company_street = faker.address.streetName().split("'").join(`''`)
+    var company_city = faker.address.cityName().split("'").join(`''`)
     var company_zipcode = faker.address.zipCode()
     var created_at = new Date().toISOString()
     var updated_at = new Date().toISOString()
@@ -40,7 +40,7 @@ const generateUsers = () => {
     '${created_at}',
     '${updated_at}'
   );`
-    // console.log(i)
+    console.log(i)
     queries = queries + query
     // if (i === 0) {
     //   console.log(query)
@@ -60,19 +60,19 @@ const generateQuotes = () => {
     var premium_amount = Math.floor(Math.random() * 4000) + 1000
     var premium_tax = Math.floor((Math.random() * 10) / 100) * premium_amount
     var premium_total = premium_amount + premium_tax
-    var street = faker.address.streetName().replaceAll(`'`, `''`)
-    var city = faker.address.cityName().replaceAll(`'`, `''`)
-    var state = faker.address.state().replaceAll(`'`, `''`)
+    var street = faker.address.streetName().split("'").join(`''`)
+    var city = faker.address.cityName().split("'").join(`''`)
+    var state = faker.address.state().split("'").join(`''`)
     var zipCode = faker.address.zipCode()
-    var driver1_name = faker.name.findName().replaceAll(`'`, `''`)
+    var driver1_name = faker.name.findName().split("'").join(`''`)
     var driver1_age = Math.floor(Math.random() * 40) + 20
-    var driver2_name = faker.name.findName().replaceAll(`'`, `''`)
+    var driver2_name = faker.name.findName().split("'").join(`''`)
     var driver2_age = Math.floor(Math.random() * 40) + 20
-    var driver3_name = faker.name.findName().replaceAll(`'`, `''`)
+    var driver3_name = faker.name.findName().split("'").join(`''`)
     var driver3_age = Math.floor(Math.random() * 40) + 20
-    var driver4_name = faker.name.findName().replaceAll(`'`, `''`)
+    var driver4_name = faker.name.findName().split("'").join(`''`)
     var driver4_age = Math.floor(Math.random() * 40) + 20
-    var driver5_name = faker.name.findName().replaceAll(`'`, `''`)
+    var driver5_name = faker.name.findName().split("'").join(`''`)
     var driver5_age = Math.floor(Math.random() * 40) + 20
     var created_at = new Date().toISOString()
     var updated_at = new Date().toISOString()

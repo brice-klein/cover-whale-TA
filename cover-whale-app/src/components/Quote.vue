@@ -64,17 +64,13 @@
         Update Quote
       </button> -->
     </div>
-    <UpdateModal v-if="this.showModal"></UpdateModal>
   </div>
 </template>
 
 <script>
-import UpdateModal from "./UpdateModal.vue";
 export default {
   name: "Quote",
-  components: {
-    UpdateModal,
-  },
+  components: {},
   data() {
     return {
       showModal: false,
