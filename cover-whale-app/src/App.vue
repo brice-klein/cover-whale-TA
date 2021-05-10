@@ -1,16 +1,24 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png" />
-    <Login v-if="this.loggedIn" @login="onLogin" />
+    <Login v-if="!this.loggedIn" @login="onLogin" />
+    <Main
+      v-if="this.loggedIn && this.userData"
+      v-bind:user-name="this.userData.name"
+      v-bind:user-id="this.userData.id"
+      @logout="logout"
+    />
   </div>
 </template>
 
 <script>
 import Login from "./components/Login.vue";
+import Main from "./components/Main.vue";
 export default {
   name: "App",
   components: {
     Login,
+    Main,
   },
   data() {
     return {
@@ -24,11 +32,27 @@ export default {
       this.userData = data;
       this.loggedIn = true;
     },
+    logout() {
+      this.loggedIn = false;
+      this.userData = {};
+    },
   },
   computed: {},
-  watch: {},
+  watch: {
+    userData(newUserData, oldUserData) {
+      this.userData = newUserData;
+      console.log(
+        "new- ",
+        newUserData,
+        " oldUserData- ",
+        oldUserData,
+        " this.userData- ",
+        this.userData
+      );
+    },
+  },
   created() {
-    console.log(localStorage.getItem("remember_token"));
+    console.log("localStorage- ", localStorage.getItem("remember_token"));
     if (localStorage.getItem("remember_token")) {
       var token = localStorage.getItem("remember_token");
       fetch(`http://localhost:3000/user?token=${token}`, {
@@ -43,9 +67,8 @@ export default {
             throw err;
           }
         });
+      this.loggedIn = true;
     }
-    this.loggedIn = true;
-    console.log(this.userData);
   },
 };
 </script>

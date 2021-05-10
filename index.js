@@ -7,7 +7,7 @@ const generators = require('./setup')
 const app = express()
 
 app.use(express.json())
-app.use(express.urlencoded())
+app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 
 const pool = new Pool({
@@ -22,7 +22,7 @@ const PORT = 3000
 const HOST = '0.0.0.0'
 
 app.get("/", async (req, res) => {
-  res.setHeader('Content-Type', 'text/html')
+  // res.setHeader('Content-Type', 'text/html')
 
   const insertUsersQuery = generators.generateUsers()
   // console.log(query)
@@ -47,7 +47,7 @@ app.get("/", async (req, res) => {
   res.send('<h1>A-OK</h1>')
 })
 
-app.post("/login", (req, result) => {
+app.post("/login", (req, res) => {
   console.log(req.body)
   // var data = req.body.username
   // console.log(data)
@@ -56,10 +56,52 @@ app.post("/login", (req, result) => {
   console.log(email, password)
   pool.query(`SELECT * FROM users WHERE users.email = '${email}' AND users.password = '${password}'`)
     .then((response) => {
-      console.log(response.rows[0])
-      result.send(JSON.stringify(response.rows[0]))
+      console.log('Express, login- ', response.rows[0])
+      res.send(JSON.stringify(response.rows[0]))
     })
     .catch(err => console.log(err))
+})
+
+app.get("/quotes/:userId", (req, res) => {
+  console.log('Express, "userID" rout- ', req.params)
+  var userId = req.params.userId
+
+  pool.query(`SELECT * FROM quotes WHERE quotes.user_id = '${userId}'`)
+    .then((response) => {
+      console.log('Express, userId quota route response- ', response)
+      // if (response.rows.length >= 1) {
+      res.send(JSON.stringify(response.rows))
+      // } else {
+      //   res.send(null)
+      // }
+    })
+    .catch(err => console.log(err))
+})
+
+app.get("/search/:state", (req, res) => {
+  var state = '*'
+  var zipcode = '*'
+  if (req.params.state !== '') {
+    state = req.params.state
+  }
+  if (req.params.zipcode !== '') {
+    zipcode = req.params.zipcode
+  }
+  // AND zipcode = '${zipcode}
+  pool.query(`SELECT * FROM quotes WHERE state = '${state}'`)
+    .then((response) => {
+      console.log('State quotes query- ', response)
+      if (response.rows) {
+        res.send(JSON.stringify(response.rows))
+      } else {
+        res.send(null)
+      }
+    })
+    .catch(err => {
+      if (err) {
+        throw err
+      }
+    })
 })
 
 app.get('/get', (req, res) => {

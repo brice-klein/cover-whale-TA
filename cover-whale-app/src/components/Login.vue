@@ -60,12 +60,11 @@ export default {
         body: JSON.stringify(data),
       })
         .then((response) => {
-          console.log(response);
           return response.json();
         })
         .then((data) => {
           //set user token
-          console.log(data);
+          console.log("login portal request data- ", data);
           this.$emit("login", data);
         });
     },
