@@ -51,7 +51,6 @@ export default {
         email: this.email,
         password: this.password,
       };
-      console.log(data);
       fetch("http://localhost:3000/login", {
         method: "POST",
         headers: {
@@ -63,8 +62,6 @@ export default {
           return response.json();
         })
         .then((data) => {
-          //set user token
-          console.log("login portal request data- ", data);
           this.$emit("login", data);
         });
     },

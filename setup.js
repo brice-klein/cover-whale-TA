@@ -55,7 +55,7 @@ const generateQuotes = () => {
   for (var i = 0; i < 1000; i++) {
     var id = uuidv4()
     var dot_number = Math.floor(Math.random() * 99999999)
-    var nbr_of_power_units = Math.floor(Math.random() * 3)
+    var nbr_of_power_units = (Math.floor(Math.random() * 3)) + 1
     var value_of_power_units = Math.floor((Math.random() * 500000) * nbr_of_power_units)
     var premium_amount = Math.floor(Math.random() * 4000) + 1000
     var premium_tax = Math.floor((Math.random() * 10) / 100) * premium_amount

@@ -48,18 +48,55 @@ app.get("/", async (req, res) => {
 })
 
 app.post("/login", (req, res) => {
-  console.log(req.body)
-  // var data = req.body.username
-  // console.log(data)
   var email = req.body.email
   var password = req.body.password
-  console.log(email, password)
+
   pool.query(`SELECT * FROM users WHERE users.email = '${email}' AND users.password = '${password}'`)
     .then((response) => {
       console.log('Express, login- ', response.rows[0])
       res.send(JSON.stringify(response.rows[0]))
     })
     .catch(err => console.log(err))
+})
+
+app.get("/getToken/:token", (req, res) => {
+  var token = req.params.token
+  console.log('token- ', token)
+  pool.query(`SELECT * FROM users WHERE users.remember_token = '${token}'`)
+    .then((response) => {
+      console.log('Express, token login- ', response)
+      res.send(JSON.stringify(response.rows[0]))
+    })
+    .catch((err) => {
+      throw err
+    })
+})
+
+app.put("/setToken", (req, res) => {
+  //TODO: Figure out why this doesn't trigger
+  var token = req.body.token
+
+  pool.query(`UPDATE users SET remember_token = '${token}'`)
+    .then((response) => {
+      res.send(response)
+    })
+    .catch((err) => {
+      throw err
+    })
+})
+
+app.post("/addQuote", (req, res) => {
+  console.log('Express, updateQuote req.body- ', req.body)
+  var quoteId = req.body.quoteId
+  var userId = req.body.userId
+
+  pool.query(`UPDATE quotes SET user_id = '${userId}' WHERE id = '${quoteId}'`)
+    .then((response) => {
+      res.send(response)
+    })
+    .catch((err) => {
+      throw err
+    })
 })
 
 app.get("/quotes/:userId", (req, res) => {
@@ -101,6 +138,14 @@ app.get("/search/:state", (req, res) => {
       if (err) {
         throw err
       }
+    })
+})
+
+app.delete('/deleteQuote/:quoteId', (req, res) => {
+  var id = req.params.quoteId
+  pool.query(`DELETE FROM quotes WHERE id = '${id}'`)
+    .then((response) => {
+      res.send(response)
     })
 })
 

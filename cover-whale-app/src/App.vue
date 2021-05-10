@@ -28,9 +28,25 @@ export default {
   },
   methods: {
     onLogin(data) {
-      console.log("onLogin: data- ", data);
       this.userData = data;
       this.loggedIn = true;
+
+      localStorage.setItem(
+        "remember_token",
+        `${this.userData.email}` + `${this.userData.name}`
+      );
+      // var token = JSON.stringify(
+      //   `${this.userData.email}` + `${this.userData.name}`
+      // );
+
+      //TO-DO: Figure out why this post doesn't seem to hit endpoint
+      // fetch("http://localhost:3000/setToken", {
+      //   method: "PUT",
+      //   headers: {
+      //     "Content-type": "application/json; charset=UTF-8",
+      //   },
+      //   body: token,
+      // });
     },
     logout() {
       this.loggedIn = false;
@@ -38,37 +54,28 @@ export default {
     },
   },
   computed: {},
-  watch: {
-    userData(newUserData, oldUserData) {
-      this.userData = newUserData;
-      console.log(
-        "new- ",
-        newUserData,
-        " oldUserData- ",
-        oldUserData,
-        " this.userData- ",
-        this.userData
-      );
-    },
-  },
+  watch: {},
   created() {
-    console.log("localStorage- ", localStorage.getItem("remember_token"));
-    if (localStorage.getItem("remember_token")) {
-      var token = localStorage.getItem("remember_token");
-      fetch(`http://localhost:3000/user?token=${token}`, {
-        mode: "no-cors",
-      })
-        .then((res) => {
-          res.json();
-        })
-        .then((data) => (this.userData = data))
-        .catch((err) => {
-          if (err) {
-            throw err;
-          }
-        });
-      this.loggedIn = true;
-    }
+    //TO-DO: Check locally stored token against db tokens
+    // if (localStorage.getItem("remember_token")) {
+    //   var token = localStorage.getItem("remember_token");
+    //   fetch(`http://localhost:3000/getToken/${token}`, {
+    //     method: "GET",
+    //     headers: {
+    //       "Content-type": "application/json; charset=UTF-8",
+    //     },
+    //   })
+    //     .then((res) => {
+    //       return res.clone().json();
+    //     })
+    //     .then((data) => (this.userData = data))
+    //     .catch((err) => {
+    //       if (err) {
+    //         throw err;
+    //       }
+    //     });
+    //   this.loggedIn = true;
+    // }
   },
 };
 </script>
